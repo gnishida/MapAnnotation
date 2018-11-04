@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include <QTextStream>
 #include <QResizeEvent>
+#include <QDomDocument>
 
 Canvas::Canvas(QWidget *parent) : QWidget(parent) {
 	ctrlPressed = false;
@@ -18,13 +19,10 @@ Canvas::Canvas(QWidget *parent) : QWidget(parent) {
 }
 
 void Canvas::loadImage(const QString& filename) {
+	image_filename = filename;
 	image_1 = QImage(filename).convertToFormat(QImage::Format_ARGB32);
-	image_08 = image_1.scaled(image_1.width() * 0.8, image_1.height() * 0.8);
-	image_064 = image_1.scaled(image_1.width() * 0.64, image_1.height() * 0.64);
-	image_0512 = image_1.scaled(image_1.width() * 0.512, image_1.height() * 0.512);
-	image_04096 = image_1.scaled(image_1.width() * 0.4096, image_1.height() * 0.4096);
-	image_032768 = image_1.scaled(image_1.width() * 0.32768, image_1.height() * 0.32768);
-
+	createMipmap(image_1);
+	
 	image_scale = std::min((float)width() / image_1.width(), (float)height() / image_1.height());
 	min_image_scale = image_scale;
 	image = image_1.scaled(image_1.width() * image_scale, image_1.height() * image_scale);
@@ -36,6 +34,86 @@ void Canvas::loadImage(const QString& filename) {
 
 void Canvas::saveImage(const QString& filename) {
 	grab().save(filename);
+}
+
+void Canvas::loadXML(const QString& filename) {
+	QDomDocument doc;
+	QFile file(filename);
+	if (!file.open(QIODevice::ReadOnly) || !doc.setContent(&file)) return;
+
+	sidewalks.clear();
+
+	QDomElement root = doc.documentElement();
+	QDomElement shape_node = root.firstChild().toElement();
+	while (!shape_node.isNull()) {
+		if (shape_node.tagName() == "image") {
+			QString filename = shape_node.attribute("filename");
+			loadImage(filename);
+		}
+		else if (shape_node.tagName() == "sidewalk") {
+			std::vector<glm::vec2> sidewalk;
+
+			QDomElement node = shape_node.firstChild().toElement();
+			while (!node.isNull()) {
+				float x = node.attribute("x").toFloat();
+				float y = node.attribute("y").toFloat();
+				sidewalk.emplace_back(x, y);
+				node = node.nextSiblingElement();
+			}
+
+			sidewalks.push_back(sidewalk);
+		}
+
+		shape_node = shape_node.nextSiblingElement();
+	}
+
+	update();
+}
+
+void Canvas::saveXML(const QString& filename) {
+	QFile file(filename);
+	if (!file.open(QFile::WriteOnly | QFile::Text)) {
+		std::cerr << "Error saving XML file.";
+		file.close();
+		return;
+	}
+
+	QDomDocument xml;
+
+	QDomElement root = xml.createElement("map");
+	xml.appendChild(root);
+
+	// image node
+	QDomElement image_node = xml.createElement("image");
+	image_node.setAttribute("filename", image_filename);
+	root.appendChild(image_node);
+
+	for (const auto& sidewalk : sidewalks) {
+		// sidewalk node
+		QDomElement sidwalk_node = xml.createElement("sidewalk");
+
+		for (const auto& p : sidewalk) {
+			QDomElement node = xml.createElement("node");
+			node.setAttribute("x", p.x);
+			node.setAttribute("y", p.y);
+			sidwalk_node.appendChild(node);
+		}
+
+		root.appendChild(sidwalk_node);
+	}
+
+	QTextStream output(&file);
+	output << xml.toString();
+
+	file.close();
+}
+
+void Canvas::createMipmap(const QImage& image) {
+	image_08 = image.scaled(image_1.width() * 0.8, image.height() * 0.8);
+	image_064 = image.scaled(image_1.width() * 0.64, image.height() * 0.64);
+	image_0512 = image.scaled(image_1.width() * 0.512, image.height() * 0.512);
+	image_04096 = image.scaled(image_1.width() * 0.4096, image.height() * 0.4096);
+	image_032768 = image.scaled(image_1.width() * 0.32768, image.height() * 0.32768);
 }
 
 void Canvas::updateImage(float& image_scale) {
@@ -81,6 +159,7 @@ void Canvas::keyPressEvent(QKeyEvent* e) {
 
 	switch (e->key()) {
 	case Qt::Key_Escape:
+		adding_new_sidewalk = false;
 		setMouseTracking(false);
 		new_sidewalk.clear();
 		break;

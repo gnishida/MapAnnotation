@@ -1,0 +1,11 @@
+<!DOCTYPE map>
+<map>
+ <image filename="C:/Users/gen/Documents/GitHub/MapAnnotation/MapAnnotation/result_small.png"/>
+ <sidewalk>
+  <node y="697.164" x="1162.84"/>
+  <node y="1230.13" x="1017.48"/>
+  <node y="904.428" x="629.87"/>
+  <node y="904.428" x="629.87"/>
+  <node y="904.428" x="629.87"/>
+ </sidewalk>
+</map>

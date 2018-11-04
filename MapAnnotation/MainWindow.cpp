@@ -6,6 +6,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	setCentralWidget(&canvas);
 
 	connect(ui.actionOpen, SIGNAL(triggered()), this, SLOT(onOpen()));
+	connect(ui.actionOpenXML, SIGNAL(triggered()), this, SLOT(onOpenXML()));
+	connect(ui.actionSaveXML, SIGNAL(triggered()), this, SLOT(onSaveXML()));
 	connect(ui.actionExit, SIGNAL(triggered()), this, SLOT(close()));
 }
 
@@ -26,4 +28,19 @@ void MainWindow::onOpen() {
 
 	canvas.loadImage(filename);
 	canvas.update();
+}
+
+void MainWindow::onOpenXML() {
+	QString filename = QFileDialog::getOpenFileName(this, tr("Open XML file..."), "", tr("XML files (*.xml)"));
+	if (filename.isEmpty()) return;
+
+	canvas.loadXML(filename);
+	canvas.update();
+}
+
+void MainWindow::onSaveXML() {
+	QString filename = QFileDialog::getSaveFileName(this, tr("Save XML file..."), "", tr("XML files (*.xml)"));
+	if (filename.isEmpty()) return;
+
+	canvas.saveXML(filename);
 }

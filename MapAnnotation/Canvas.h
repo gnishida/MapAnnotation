@@ -16,6 +16,7 @@ private:
 	QImage image_04096;
 	QImage image_032768;
 
+	QString image_filename;
 	QImage image;
 	QPoint prev_pt;
 	float image_scale;
@@ -34,6 +35,9 @@ public:
 
 	void loadImage(const QString& filename);
 	void saveImage(const QString& filename);
+	void loadXML(const QString& filename);
+	void saveXML(const QString& filename);
+	void createMipmap(const QImage& image);
 	void updateImage(float& image_scale);
 	void keyPressEvent(QKeyEvent* e);
 	void keyReleaseEvent(QKeyEvent* e);

@@ -22,6 +22,8 @@ protected:
 
 public slots:
 	void onOpen();
+	void onOpenXML();
+	void onSaveXML();
 };
 
 #endif // MAINWINDOW_H
