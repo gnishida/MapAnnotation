@@ -5,7 +5,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	ui.setupUi(this);
 	setCentralWidget(&canvas);
 
-	connect(ui.actionOpen, SIGNAL(triggered()), this, SLOT(onOpen()));
+	connect(ui.actionOpenImage, SIGNAL(triggered()), this, SLOT(onOpenImage()));
 	connect(ui.actionOpenXML, SIGNAL(triggered()), this, SLOT(onOpenXML()));
 	connect(ui.actionOpenOSM, SIGNAL(triggered()), this, SLOT(onOpenOSM()));
 	connect(ui.actionSaveXML, SIGNAL(triggered()), this, SLOT(onSaveXML()));
@@ -23,7 +23,7 @@ void MainWindow::keyReleaseEvent(QKeyEvent* e) {
 	canvas.keyReleaseEvent(e);
 }
 
-void MainWindow::onOpen() {
+void MainWindow::onOpenImage() {
 	QString filename = QFileDialog::getOpenFileName(this, tr("Open image file..."), "", tr("Image files (*.png)"));
 	if (filename.isEmpty()) return;
 

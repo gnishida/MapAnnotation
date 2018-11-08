@@ -27,7 +27,7 @@ class Ui_MainWindowClass
 {
 public:
     QAction *actionExit;
-    QAction *actionOpen;
+    QAction *actionOpenImage;
     QAction *actionOpenXML;
     QAction *actionSaveXML;
     QAction *actionOpenOSM;
@@ -44,8 +44,8 @@ public:
         MainWindowClass->resize(835, 744);
         actionExit = new QAction(MainWindowClass);
         actionExit->setObjectName(QStringLiteral("actionExit"));
-        actionOpen = new QAction(MainWindowClass);
-        actionOpen->setObjectName(QStringLiteral("actionOpen"));
+        actionOpenImage = new QAction(MainWindowClass);
+        actionOpenImage->setObjectName(QStringLiteral("actionOpenImage"));
         actionOpenXML = new QAction(MainWindowClass);
         actionOpenXML->setObjectName(QStringLiteral("actionOpenXML"));
         actionSaveXML = new QAction(MainWindowClass);
@@ -69,7 +69,7 @@ public:
         MainWindowClass->setStatusBar(statusBar);
 
         menuBar->addAction(menuFile->menuAction());
-        menuFile->addAction(actionOpen);
+        menuFile->addAction(actionOpenImage);
         menuFile->addAction(actionOpenXML);
         menuFile->addAction(actionOpenOSM);
         menuFile->addAction(actionSaveXML);
@@ -83,10 +83,10 @@ public:
 
     void retranslateUi(QMainWindow *MainWindowClass)
     {
-        MainWindowClass->setWindowTitle(QApplication::translate("MainWindowClass", "MainWindow", 0));
+        MainWindowClass->setWindowTitle(QApplication::translate("MainWindowClass", "Map Annotation", 0));
         actionExit->setText(QApplication::translate("MainWindowClass", "Exit", 0));
-        actionOpen->setText(QApplication::translate("MainWindowClass", "Open", 0));
-        actionOpen->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+O", 0));
+        actionOpenImage->setText(QApplication::translate("MainWindowClass", "Open Image", 0));
+        actionOpenImage->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+O", 0));
         actionOpenXML->setText(QApplication::translate("MainWindowClass", "Open XML", 0));
         actionSaveXML->setText(QApplication::translate("MainWindowClass", "Save XML", 0));
         actionSaveXML->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+S", 0));

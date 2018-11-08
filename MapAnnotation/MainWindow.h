@@ -21,7 +21,7 @@ protected:
 	void keyReleaseEvent(QKeyEvent* e);
 
 public slots:
-	void onOpen();
+	void onOpenImage();
 	void onOpenXML();
 	void onOpenOSM();
 	void onSaveXML();
