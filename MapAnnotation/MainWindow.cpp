@@ -7,6 +7,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
 	connect(ui.actionOpen, SIGNAL(triggered()), this, SLOT(onOpen()));
 	connect(ui.actionOpenXML, SIGNAL(triggered()), this, SLOT(onOpenXML()));
+	connect(ui.actionOpenOSM, SIGNAL(triggered()), this, SLOT(onOpenOSM()));
 	connect(ui.actionSaveXML, SIGNAL(triggered()), this, SLOT(onSaveXML()));
 	connect(ui.actionExit, SIGNAL(triggered()), this, SLOT(close()));
 }
@@ -35,6 +36,14 @@ void MainWindow::onOpenXML() {
 	if (filename.isEmpty()) return;
 
 	canvas.loadXML(filename);
+	canvas.update();
+}
+
+void MainWindow::onOpenOSM() {
+	QString filename = QFileDialog::getOpenFileName(this, tr("Open OSM file..."), "", tr("OSM files (*.osm)"));
+	if (filename.isEmpty()) return;
+
+	canvas.loadOSM(filename);
 	canvas.update();
 }
 

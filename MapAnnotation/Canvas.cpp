@@ -7,6 +7,7 @@
 #include <QTextStream>
 #include <QResizeEvent>
 #include <QDomDocument>
+#include <unordered_map>
 
 Canvas::Canvas(QWidget *parent) : QWidget(parent) {
 	ctrlPressed = false;
@@ -66,6 +67,65 @@ void Canvas::loadXML(const QString& filename) {
 
 		shape_node = shape_node.nextSiblingElement();
 	}
+
+	update();
+}
+
+void Canvas::loadOSM(const QString& filename) {
+	QDomDocument doc;
+	QFile file(filename);
+	if (!file.open(QIODevice::ReadOnly) || !doc.setContent(&file)) return;
+
+	
+	std::unordered_map<unsigned long long, glm::vec2> nodes;
+	roads.clear();
+	buildings.clear();
+
+	QDomElement root = doc.documentElement();
+	QDomElement element = root.firstChild().toElement();
+	while (!element.isNull()) {
+		if (element.tagName() == "node") {
+			unsigned long long id = element.attribute("id").toULongLong();
+			double lon = element.attribute("lon").toDouble();
+			double lat = element.attribute("lat").toDouble();
+			nodes[id] = { lon, lat };
+		}
+		else if (element.tagName() == "way") {
+			if (!element.hasAttribute("visible") || element.attribute("visible") == "true") {
+				std::vector<glm::vec2> polygon;
+				QString type;
+
+				QDomElement child_element = element.firstChild().toElement();
+				while (!child_element.isNull()) {
+					if (child_element.tagName() == "nd") {
+						unsigned long long id = child_element.attribute("ref").toULongLong();
+						polygon.push_back(nodes[id]);
+					}
+					else if (child_element.tagName() == "tag") {
+						QString k = child_element.attribute("k");
+						if (k == "building") type = "building";
+						else if (k == "highway") type = "highway";
+					}
+
+					child_element = child_element.nextSiblingElement();
+				}
+
+				if (type == "building") {
+					buildings.push_back(polygon);
+				}
+				else if (type == "highway") {
+					roads.push_back(polygon);
+				}
+			}
+		}
+
+		element = element.nextSiblingElement();
+	}
+
+	//road_offset = glm::vec2(0, 0);
+	osm_offset = glm::vec2(232, -241);
+	//road_scale = glm::vec2(image_1.width() / 0.0151, image_1.height() / 0.0118);
+	osm_scale = glm::vec2(745634, 941299);
 
 	update();
 }
@@ -158,12 +218,46 @@ void Canvas::keyPressEvent(QKeyEvent* e) {
 	}
 
 	switch (e->key()) {
+	case Qt::Key_Right:
+		if (ctrlPressed) {
+			osm_scale.x += image_1.width() * 0.1;
+		}
+		else {
+			osm_offset.x++;
+		}
+		break;
+	case Qt::Key_Left:
+		if (ctrlPressed) {
+			osm_scale.x -= image_1.width() * 0.1;
+		}
+		else {
+			osm_offset.x--;
+		}
+		break;
+	case Qt::Key_Up:
+		if (ctrlPressed) {
+			osm_scale.y -= image_1.height() * 0.1;
+		}
+		else {
+			osm_offset.y--;
+		}
+		break;
+	case Qt::Key_Down:
+		if (ctrlPressed) {
+			osm_scale.y += image_1.height() * 0.1;
+		}
+		else {
+			osm_offset.y++;
+		}
+		break;
 	case Qt::Key_Escape:
 		adding_new_sidewalk = false;
 		setMouseTracking(false);
 		new_sidewalk.clear();
 		break;
 	}
+
+	std::cout << "scale=(" << osm_scale.x << "," << osm_scale.y << "), offset=(" << osm_offset.x << "," << osm_offset.y << ")" << std::endl;
 
 	update();
 }
@@ -187,6 +281,28 @@ void Canvas::paintEvent(QPaintEvent* e) {
 	painter.fillRect(0, 0, width(), height(), QColor(128, 128, 128, 255));
 	if (!image.isNull()) {
 		painter.drawImage(image_pos.x, image_pos.y, image);
+	}
+
+	// draw roads
+	painter.setPen(QPen(QColor(255, 255, 0, 128), 3));
+	painter.setBrush(QBrush(QColor(255, 255, 0, 128)));
+	for (const auto& road : roads) {
+		QPolygon polygon;
+		for (const auto& p : road) {
+			polygon.push_back(QPoint(((p.x + 122.4945) * osm_scale.x + osm_offset.x) * image_scale + image_pos.x, ((37.6986 - p.y) * osm_scale.y + osm_offset.y) * image_scale + image_pos.y));
+		}
+		painter.drawPolyline(polygon);
+	}
+
+	// draw buildings
+	painter.setPen(QPen(QColor(0, 255, 0, 128), 3));
+	painter.setBrush(QBrush(QColor(0, 255, 0, 128)));
+	for (const auto& building : buildings) {
+		QPolygon polygon;
+		for (const auto& p : building) {
+			polygon.push_back(QPoint(((p.x + 122.4945) * osm_scale.x + osm_offset.x) * image_scale + image_pos.x, ((37.6986 - p.y) * osm_scale.y + osm_offset.y) * image_scale + image_pos.y));
+		}
+		painter.drawPolygon(polygon);
 	}
 
 	// draw sidewalks

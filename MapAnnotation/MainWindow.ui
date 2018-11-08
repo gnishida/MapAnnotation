@@ -29,6 +29,7 @@
     </property>
     <addaction name="actionOpen"/>
     <addaction name="actionOpenXML"/>
+    <addaction name="actionOpenOSM"/>
     <addaction name="actionSaveXML"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
@@ -68,6 +69,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionOpenOSM">
+   <property name="text">
+    <string>Open OSM</string>
    </property>
   </action>
  </widget>

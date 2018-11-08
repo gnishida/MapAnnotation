@@ -27,6 +27,11 @@ private:
 	std::vector<glm::vec2> new_sidewalk;
 	bool adding_new_sidewalk;
 
+	glm::vec2 osm_offset;
+	glm::vec2 osm_scale;
+	std::vector<std::vector<glm::vec2>> roads;
+	std::vector<std::vector<glm::vec2>> buildings;
+
 	bool ctrlPressed;
 	bool shiftPressed;
 	
@@ -36,6 +41,7 @@ public:
 	void loadImage(const QString& filename);
 	void saveImage(const QString& filename);
 	void loadXML(const QString& filename);
+	void loadOSM(const QString& filename);
 	void saveXML(const QString& filename);
 	void createMipmap(const QImage& image);
 	void updateImage(float& image_scale);

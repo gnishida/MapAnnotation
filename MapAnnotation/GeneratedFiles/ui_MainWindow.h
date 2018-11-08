@@ -30,6 +30,7 @@ public:
     QAction *actionOpen;
     QAction *actionOpenXML;
     QAction *actionSaveXML;
+    QAction *actionOpenOSM;
     QWidget *centralWidget;
     QMenuBar *menuBar;
     QMenu *menuFile;
@@ -49,6 +50,8 @@ public:
         actionOpenXML->setObjectName(QStringLiteral("actionOpenXML"));
         actionSaveXML = new QAction(MainWindowClass);
         actionSaveXML->setObjectName(QStringLiteral("actionSaveXML"));
+        actionOpenOSM = new QAction(MainWindowClass);
+        actionOpenOSM->setObjectName(QStringLiteral("actionOpenOSM"));
         centralWidget = new QWidget(MainWindowClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         MainWindowClass->setCentralWidget(centralWidget);
@@ -68,6 +71,7 @@ public:
         menuBar->addAction(menuFile->menuAction());
         menuFile->addAction(actionOpen);
         menuFile->addAction(actionOpenXML);
+        menuFile->addAction(actionOpenOSM);
         menuFile->addAction(actionSaveXML);
         menuFile->addSeparator();
         menuFile->addAction(actionExit);
@@ -86,6 +90,7 @@ public:
         actionOpenXML->setText(QApplication::translate("MainWindowClass", "Open XML", 0));
         actionSaveXML->setText(QApplication::translate("MainWindowClass", "Save XML", 0));
         actionSaveXML->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+S", 0));
+        actionOpenOSM->setText(QApplication::translate("MainWindowClass", "Open OSM", 0));
         menuFile->setTitle(QApplication::translate("MainWindowClass", "File", 0));
     } // retranslateUi
 

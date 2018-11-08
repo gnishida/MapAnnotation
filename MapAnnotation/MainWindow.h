@@ -23,6 +23,7 @@ protected:
 public slots:
 	void onOpen();
 	void onOpenXML();
+	void onOpenOSM();
 	void onSaveXML();
 };
 
