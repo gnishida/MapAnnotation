@@ -9,6 +9,8 @@
 class Canvas : public QWidget {
 private:
 	// image mipmaps
+	QImage image_15;
+	QImage image_125;
 	QImage image_1;
 	QImage image_08;
 	QImage image_064;
@@ -27,6 +29,7 @@ private:
 	std::vector<glm::vec2> new_sidewalk;
 	bool adding_new_sidewalk;
 
+	QString osm_filename;
 	glm::vec2 osm_offset;
 	glm::vec2 osm_scale;
 	std::vector<std::vector<glm::vec2>> roads;

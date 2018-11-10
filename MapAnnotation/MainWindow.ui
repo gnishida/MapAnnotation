@@ -27,10 +27,11 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionOpenImage"/>
     <addaction name="actionOpenXML"/>
-    <addaction name="actionOpenOSM"/>
     <addaction name="actionSaveXML"/>
+    <addaction name="separator"/>
+    <addaction name="actionOpenImage"/>
+    <addaction name="actionOpenOSM"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
@@ -54,13 +55,13 @@
    <property name="text">
     <string>Open Image</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+O</string>
-   </property>
   </action>
   <action name="actionOpenXML">
    <property name="text">
     <string>Open XML</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionSaveXML">

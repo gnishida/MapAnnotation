@@ -69,10 +69,11 @@ public:
         MainWindowClass->setStatusBar(statusBar);
 
         menuBar->addAction(menuFile->menuAction());
-        menuFile->addAction(actionOpenImage);
         menuFile->addAction(actionOpenXML);
-        menuFile->addAction(actionOpenOSM);
         menuFile->addAction(actionSaveXML);
+        menuFile->addSeparator();
+        menuFile->addAction(actionOpenImage);
+        menuFile->addAction(actionOpenOSM);
         menuFile->addSeparator();
         menuFile->addAction(actionExit);
 
@@ -86,8 +87,8 @@ public:
         MainWindowClass->setWindowTitle(QApplication::translate("MainWindowClass", "Map Annotation", 0));
         actionExit->setText(QApplication::translate("MainWindowClass", "Exit", 0));
         actionOpenImage->setText(QApplication::translate("MainWindowClass", "Open Image", 0));
-        actionOpenImage->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+O", 0));
         actionOpenXML->setText(QApplication::translate("MainWindowClass", "Open XML", 0));
+        actionOpenXML->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+O", 0));
         actionSaveXML->setText(QApplication::translate("MainWindowClass", "Save XML", 0));
         actionSaveXML->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+S", 0));
         actionOpenOSM->setText(QApplication::translate("MainWindowClass", "Open OSM", 0));

@@ -51,6 +51,15 @@ void Canvas::loadXML(const QString& filename) {
 			QString filename = shape_node.attribute("filename");
 			loadImage(filename);
 		}
+		else if (shape_node.tagName() == "osm") {
+			QString filename = shape_node.attribute("filename");
+			loadOSM(filename);
+
+			osm_offset.x = shape_node.attribute("osm_offset_x").toFloat();
+			osm_offset.y = shape_node.attribute("osm_offset_y").toFloat();
+			osm_scale.x = shape_node.attribute("osm_scale_x").toFloat();
+			osm_scale.y = shape_node.attribute("osm_scale_y").toFloat();
+		}
 		else if (shape_node.tagName() == "sidewalk") {
 			std::vector<glm::vec2> sidewalk;
 
@@ -76,6 +85,7 @@ void Canvas::loadOSM(const QString& filename) {
 	QFile file(filename);
 	if (!file.open(QIODevice::ReadOnly) || !doc.setContent(&file)) return;
 
+	osm_filename = filename;
 	
 	std::unordered_map<unsigned long long, glm::vec2> nodes;
 	roads.clear();
@@ -122,10 +132,8 @@ void Canvas::loadOSM(const QString& filename) {
 		element = element.nextSiblingElement();
 	}
 
-	//road_offset = glm::vec2(0, 0);
-	osm_offset = glm::vec2(232, -241);
-	//road_scale = glm::vec2(image_1.width() / 0.0151, image_1.height() / 0.0118);
-	osm_scale = glm::vec2(745634, 941299);
+	osm_offset = glm::vec2(0, 0);
+	osm_scale = glm::vec2(image_1.width() / 0.0151, image_1.height() / 0.0118);
 
 	update();
 }
@@ -144,9 +152,22 @@ void Canvas::saveXML(const QString& filename) {
 	xml.appendChild(root);
 
 	// image node
-	QDomElement image_node = xml.createElement("image");
-	image_node.setAttribute("filename", image_filename);
-	root.appendChild(image_node);
+	if (!image_filename.isEmpty()) {
+		QDomElement image_node = xml.createElement("image");
+		image_node.setAttribute("filename", image_filename);
+		root.appendChild(image_node);
+	}
+
+	// osm node
+	if (!osm_filename.isEmpty()) {
+		QDomElement osm_node = xml.createElement("osm");
+		osm_node.setAttribute("filename", osm_filename);
+		osm_node.setAttribute("osm_offset_x", osm_offset.x);
+		osm_node.setAttribute("osm_offset_y", osm_offset.y);
+		osm_node.setAttribute("osm_scale_x", osm_scale.x);
+		osm_node.setAttribute("osm_scale_y", osm_scale.y);
+		root.appendChild(osm_node);
+	}
 
 	for (const auto& sidewalk : sidewalks) {
 		// sidewalk node
@@ -169,6 +190,8 @@ void Canvas::saveXML(const QString& filename) {
 }
 
 void Canvas::createMipmap(const QImage& image) {
+	image_15 = image.scaled(image_1.width() * 1.5, image.height() * 1.5);
+	image_125 = image.scaled(image_1.width() * 1.25, image.height() * 1.25);
 	image_08 = image.scaled(image_1.width() * 0.8, image.height() * 0.8);
 	image_064 = image.scaled(image_1.width() * 0.64, image.height() * 0.64);
 	image_0512 = image.scaled(image_1.width() * 0.512, image.height() * 0.512);
@@ -177,7 +200,15 @@ void Canvas::createMipmap(const QImage& image) {
 }
 
 void Canvas::updateImage(float& image_scale) {
-	if (image_scale > 0.9) {
+	if (image_scale > 1.35) {
+		image_scale = 1.5;
+		image = image_15;
+	}
+	else if (image_scale > 1.1) {
+		image_scale = 1.25f;
+		image = image_125;
+	}
+	else if (image_scale > 0.9) {
 		image_scale = 1.0f;
 		image = image_1;
 	}
@@ -257,7 +288,7 @@ void Canvas::keyPressEvent(QKeyEvent* e) {
 		break;
 	}
 
-	std::cout << "scale=(" << osm_scale.x << "," << osm_scale.y << "), offset=(" << osm_offset.x << "," << osm_offset.y << ")" << std::endl;
+	//std::cout << "scale=(" << osm_scale.x << "," << osm_scale.y << "), offset=(" << osm_offset.x << "," << osm_offset.y << ")" << std::endl;
 
 	update();
 }
@@ -378,7 +409,7 @@ void Canvas::mouseReleaseEvent(QMouseEvent* e) {
 void Canvas::wheelEvent(QWheelEvent* e) {
 	float old_image_scale = image_scale;
 	image_scale *= (e->delta() > 0 ? 1.2 : 0.8);
-	image_scale = std::min(std::max(min_image_scale, image_scale), 1.0f);
+	image_scale = std::min(std::max(min_image_scale, image_scale), 1.25f);
 	updateImage(image_scale);
 
 	image_pos.x = width() * 0.5 - (width() * 0.5 - image_pos.x) * image_scale / old_image_scale;
