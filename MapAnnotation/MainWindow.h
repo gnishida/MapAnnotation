@@ -22,6 +22,7 @@ protected:
 
 public slots:
 	void onOpenImage();
+	void onSaveImage();
 	void onOpenXML();
 	void onOpenOSM();
 	void onSaveXML();

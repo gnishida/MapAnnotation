@@ -34,7 +34,23 @@ void Canvas::loadImage(const QString& filename) {
 }
 
 void Canvas::saveImage(const QString& filename) {
-	grab().save(filename);
+	QImage image = QImage(image_1.width(), image_1.height(), QImage::Format_RGB888);
+	QPainter painter(&image);
+
+	painter.fillRect(0, 0, width(), height(), QColor(0, 0, 0, 255));
+
+	// draw sidewalks
+	painter.setPen(QPen(QColor(255, 255, 255, 255)));
+	painter.setBrush(QBrush(QColor(255, 255, 255, 255)));
+	for (const auto& sidewalk : sidewalks) {
+		QPolygon polygon;
+		for (const auto& p : sidewalk) {
+			polygon.push_back(QPoint(p.x, p.y));
+		}
+		painter.drawPolygon(polygon);
+	}
+
+	image.save(filename);
 }
 
 void Canvas::loadXML(const QString& filename) {

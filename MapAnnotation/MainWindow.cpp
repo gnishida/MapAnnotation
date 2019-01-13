@@ -6,6 +6,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	setCentralWidget(&canvas);
 
 	connect(ui.actionOpenImage, SIGNAL(triggered()), this, SLOT(onOpenImage()));
+	connect(ui.actionSaveImage, SIGNAL(triggered()), this, SLOT(onSaveImage()));
 	connect(ui.actionOpenXML, SIGNAL(triggered()), this, SLOT(onOpenXML()));
 	connect(ui.actionOpenOSM, SIGNAL(triggered()), this, SLOT(onOpenOSM()));
 	connect(ui.actionSaveXML, SIGNAL(triggered()), this, SLOT(onSaveXML()));
@@ -29,6 +30,13 @@ void MainWindow::onOpenImage() {
 
 	canvas.loadImage(filename);
 	canvas.update();
+}
+
+void MainWindow::onSaveImage() {
+	QString filename = QFileDialog::getSaveFileName(this, tr("Save image file..."), "", tr("Image files (*.png)"));
+	if (filename.isEmpty()) return;
+
+	canvas.saveImage(filename);
 }
 
 void MainWindow::onOpenXML() {

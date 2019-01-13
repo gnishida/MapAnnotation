@@ -31,6 +31,7 @@ public:
     QAction *actionOpenXML;
     QAction *actionSaveXML;
     QAction *actionOpenOSM;
+    QAction *actionSaveImage;
     QWidget *centralWidget;
     QMenuBar *menuBar;
     QMenu *menuFile;
@@ -52,6 +53,8 @@ public:
         actionSaveXML->setObjectName(QStringLiteral("actionSaveXML"));
         actionOpenOSM = new QAction(MainWindowClass);
         actionOpenOSM->setObjectName(QStringLiteral("actionOpenOSM"));
+        actionSaveImage = new QAction(MainWindowClass);
+        actionSaveImage->setObjectName(QStringLiteral("actionSaveImage"));
         centralWidget = new QWidget(MainWindowClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         MainWindowClass->setCentralWidget(centralWidget);
@@ -73,6 +76,7 @@ public:
         menuFile->addAction(actionSaveXML);
         menuFile->addSeparator();
         menuFile->addAction(actionOpenImage);
+        menuFile->addAction(actionSaveImage);
         menuFile->addAction(actionOpenOSM);
         menuFile->addSeparator();
         menuFile->addAction(actionExit);
@@ -92,6 +96,7 @@ public:
         actionSaveXML->setText(QApplication::translate("MainWindowClass", "Save XML", Q_NULLPTR));
         actionSaveXML->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+S", Q_NULLPTR));
         actionOpenOSM->setText(QApplication::translate("MainWindowClass", "Open OSM", Q_NULLPTR));
+        actionSaveImage->setText(QApplication::translate("MainWindowClass", "Save Image", Q_NULLPTR));
         menuFile->setTitle(QApplication::translate("MainWindowClass", "File", Q_NULLPTR));
     } // retranslateUi
 
